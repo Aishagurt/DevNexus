@@ -1,7 +1,9 @@
 package com.devnexus.controller;
 
-import com.devnexus.model.File;
-import com.devnexus.model.Photo;
+import com.devnexus.dto.PhotoDto;
+import com.devnexus.mapper.PhotoMapper;
+import com.devnexus.model.db.File;
+import com.devnexus.model.db.Photo;
 import com.devnexus.service.FileService;
 import com.devnexus.service.PhotoService;
 import org.springframework.http.HttpStatus;
@@ -26,27 +28,10 @@ public class PhotoController {
         this.fileService = fileService;
     }
 
-
     @PostMapping
-    public ResponseEntity<String> uploadPhoto(@RequestParam("image") MultipartFile uploadedFile, @RequestParam("name") String name, @RequestParam("email") String email) {
-        Photo photo = new Photo();
-        photo.setName(name);
-        photo.setEmail(email);
-
-        try {
-            File savedFile = fileService.uploadImage(uploadedFile);
-
-            savedFile.setName(name);
-            savedFile.setType(uploadedFile.getContentType());
-
-            photo.setFile(savedFile);
-
-            photoService.save(photo);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("ok");
+    public ResponseEntity<File> uploadPhoto(@RequestParam("image") MultipartFile uploadedFile, @RequestParam("name") String name, @RequestParam("email") String email) throws IOException {
+        File savedFile = fileService.uploadImage(uploadedFile, name, email);
+        return ResponseEntity.ok(savedFile);
     }
 
 
@@ -59,10 +44,24 @@ public class PhotoController {
 
     }
 
+    @GetMapping("/{photoId}")
+    public ResponseEntity<PhotoDto> getPhotoById(@PathVariable Long photoId) {
+        Optional<Photo> optPhoto = photoService.findById(photoId);
+
+        if (optPhoto.isPresent()) {
+            Photo photo = optPhoto.get();
+            PhotoDto photoDto = PhotoMapper.mapPhotoToDto(photo);
+            return ResponseEntity.ok(photoDto);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("/get/{page}/{size}")
-    public ResponseEntity<List<Photo>> getPhotos(@PathVariable(name = "page") int page, @PathVariable(name = "size") int size) {
+    public ResponseEntity<List<PhotoDto>> getPhotos(@PathVariable(name = "page") int page,
+                                                    @PathVariable(name = "size") int size) {
         List<Photo> photos = photoService.getPhotosBySize(page, size);
-        return ResponseEntity.ok(photos);
+        List<PhotoDto> photoDtos = PhotoMapper.mapPhotosToDtos(photos);
+        return ResponseEntity.ok(photoDtos);
     }
 
     @GetMapping("/search")
@@ -72,23 +71,13 @@ public class PhotoController {
         if (photos.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(photos);
     }
 
-
-    @GetMapping("/{photoId}")
-    public ResponseEntity<Photo> getPhotoById(@PathVariable Long photoId) {
-        Optional<Photo> photo = photoService.findById(photoId);
-        return photo.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePhoto(@PathVariable Long id) {
+    public ResponseEntity<String> deletePhoto(@PathVariable Long id) {
         try {
-            String result = photoService.deletePhoto(id);
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(photoService.deletePhoto(id));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

@@ -1,7 +1,6 @@
 package com.devnexus.config;
 
-import com.devnexus.dto.UserDto;
-import com.devnexus.model.User;
+import com.devnexus.model.db.User;
 import com.devnexus.service.JwtService;
 import com.devnexus.service.UserService;
 import jakarta.servlet.FilterChain;

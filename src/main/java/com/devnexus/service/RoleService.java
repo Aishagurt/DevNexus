@@ -1,6 +1,6 @@
 package com.devnexus.service;
 
-import com.devnexus.model.Role;
+import com.devnexus.model.db.Role;
 import com.devnexus.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 

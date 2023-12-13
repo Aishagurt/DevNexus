@@ -1,6 +1,6 @@
 package com.devnexus.config;
 
-import com.devnexus.model.User;
+import com.devnexus.model.db.User;
 import com.devnexus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

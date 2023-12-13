@@ -1,7 +1,6 @@
 package com.devnexus.service;
 
-import com.devnexus.dto.UserDto;
-import com.devnexus.model.User;
+import com.devnexus.model.db.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,10 +1,10 @@
 package com.devnexus.service;
 
-import com.devnexus.auth.AuthenticationRequest;
-import com.devnexus.auth.AuthenticationResponse;
-import com.devnexus.model.Token;
-import com.devnexus.model.TokenType;
-import com.devnexus.model.User;
+import com.devnexus.model.api.AuthenticationRequest;
+import com.devnexus.model.api.AuthenticationResponse;
+import com.devnexus.model.db.Token;
+import com.devnexus.constants.TokenType;
+import com.devnexus.model.db.User;
 import com.devnexus.repository.TokenRepository;
 import com.devnexus.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class AuthenticationService {
             UserDetails userDetails = userService.findUserByEmail(request.getEmail());
 
             if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-                com.devnexus.model.User user = repository.findByEmail(request.getEmail());
+                User user = userService.findUserByEmail(request.getEmail());
 
                 var jwtToken = jwtService.generateToken(user);
 
@@ -52,7 +52,7 @@ public class AuthenticationService {
         }
     }
 
-    private void saveUserToken(com.devnexus.model.User user, String jwtToken) {
+    private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -87,7 +87,7 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            com.devnexus.model.User user = this.repository.findByEmail(userEmail);
+            User user = this.repository.findByEmail(userEmail);
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);

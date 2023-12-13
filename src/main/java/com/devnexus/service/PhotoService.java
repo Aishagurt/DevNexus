@@ -1,6 +1,6 @@
 package com.devnexus.service;
 
-import com.devnexus.model.Photo;
+import com.devnexus.model.db.Photo;
 import com.devnexus.repository.PhotoRepository;
 import com.devnexus.utils.ImageUtils;
 import org.springframework.data.domain.PageRequest;
@@ -27,18 +27,10 @@ public class PhotoService {
         return photoRepository.findById(id);
     }
 
-    public List<Photo> getPhotos(int start, int end) {
-        List<Photo> photos = photoRepository.findPhotosInRange(start, end);
-        for(int i = 0; i < photos.size(); i++) {
-            photos.get(i).getFile().setImageData(ImageUtils.decompressImage(photos.get(i).getFile().getImageData()));
-        }
-        return photos;
-    }
-
     public List<Photo> getPhotosByName(String name) {
         List<Photo> photos = photoRepository.findByNameContainingIgnoreCase(name);
-        for(int i = 0; i < photos.size(); i++) {
-            photos.get(i).getFile().setImageData(ImageUtils.decompressImage(photos.get(i).getFile().getImageData()));
+        for (Photo photo : photos) {
+            photo.getFile().setImageData(ImageUtils.decompressImage(photo.getFile().getImageData()));
         }
         return photos;
     }
@@ -62,9 +54,5 @@ public class PhotoService {
         } else {
             throw new NoSuchElementException("Photo not found with ID " + id);
         }
-    }
-
-    public void deleteById(Long id) {
-        photoRepository.deleteById(id);
     }
 }

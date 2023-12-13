@@ -1,6 +1,6 @@
 package com.devnexus.repository;
 
-import com.devnexus.model.Comment;
+import com.devnexus.model.db.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,13 +1,12 @@
 package com.devnexus.service;
 
 import com.devnexus.dto.CommentDto;
-import com.devnexus.model.Comment;
-import com.devnexus.model.Photo;
+import com.devnexus.mapper.CommentMapper;
+import com.devnexus.model.db.Comment;
+import com.devnexus.model.db.Photo;
 import com.devnexus.repository.CommentRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +18,6 @@ public class CommentService {
     public CommentService(CommentRepository commentRepository, PhotoService photoService) {
         this.commentRepository = commentRepository;
         this.photoService = photoService;
-    }
-
-    public Comment saveComment(Comment comment) {
-        return commentRepository.save(comment);
     }
 
     public Optional<Comment> getCommentById(Long commentId) {
@@ -38,7 +33,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public void removeCommentWithPhoto(Long commentId) {
+    public void removeCommentFromPhoto(Long commentId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
 
         if (optionalComment.isPresent()) {
@@ -57,16 +52,6 @@ public class CommentService {
 
     public List<CommentDto> getCommentsByPhotoId(Long photoId) {
         List<Comment> comments = commentRepository.findByPhotoId(photoId);
-        List<CommentDto> commentDTOs = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            CommentDto commentDTO = new CommentDto();
-            commentDTO.setCommentId(comment.getId());
-            commentDTO.setPhotoId(comment.getPhoto().getId());
-            commentDTO.setText(comment.getText());
-            commentDTOs.add(commentDTO);
-        }
-
-        return commentDTOs;
+        return CommentMapper.mapToDtoList(comments);
     }
 }

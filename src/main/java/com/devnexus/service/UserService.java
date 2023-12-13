@@ -1,12 +1,9 @@
 package com.devnexus.service;
 
-import com.devnexus.model.Role;
-import com.devnexus.model.User;
-import com.devnexus.repository.TokenRepository;
+import com.devnexus.mapper.UserMapper;
+import com.devnexus.model.db.User;
 import com.devnexus.repository.UserRepository;
 import com.devnexus.dto.UserDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +22,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User save(UserDto userDto) {
+    public UserDto save(UserDto userDto) {
         User user = new User(userDto.getName(), userDto.getSurname(),
                 userDto.getBirthDate(), userDto.getEmail(),
                 passwordEncoder.encode(userDto.getPassword()), List.of(roleService.findRoleByName("ROLE_USER")));
-        return userRepository.save(user);
+        return UserMapper.userToUserDto(userRepository.save(user));
     }
 
     public Boolean doesEmailExist(String email) {

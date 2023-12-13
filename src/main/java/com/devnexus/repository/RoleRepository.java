@@ -1,6 +1,6 @@
 package com.devnexus.repository;
 
-import com.devnexus.model.Role;
+import com.devnexus.model.db.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {

@@ -1,16 +1,13 @@
 package com.devnexus.controller;
 
-import com.devnexus.auth.AuthenticationRequest;
-import com.devnexus.auth.AuthenticationResponse;
+import com.devnexus.model.api.AuthenticationRequest;
+import com.devnexus.model.api.AuthenticationResponse;
 import com.devnexus.service.AuthenticationService;
-import com.devnexus.model.User;
 import com.devnexus.service.UserService;
 import com.devnexus.dto.UserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,13 +27,8 @@ public class UserController {
         this.authService = service;
     }
 
-    @GetMapping
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserDto());
-        return "registration";
-    }
     @PostMapping("/registration")
-    public User registerUserAccount(@Validated @RequestBody UserDto user){
+    public UserDto registerUserAccount(@Validated @RequestBody UserDto user){
         return userService.save(user);
     }
 
@@ -47,17 +39,12 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authService.refreshToken(request, response);
     }
 
