@@ -1,0 +1,35 @@
+version: '3'
+services:
+  database:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: react_spring_project
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/react_spring_project?useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    depends_on:
+      - database
+    restart: on-failure
+
+  frontend:
+      build:
+        context: ./reactfrontend
+        dockerfile: DockerFile
+      ports:
+        - "3000:3000"
+
+volumes:
+  db-data:
