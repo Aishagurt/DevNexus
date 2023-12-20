@@ -2,7 +2,6 @@ package com.devnexus.controller;
 
 import com.devnexus.dto.PhotoDto;
 import com.devnexus.mapper.PhotoMapper;
-import com.devnexus.model.db.File;
 import com.devnexus.model.db.Photo;
 import com.devnexus.service.FileService;
 import com.devnexus.service.PhotoService;
@@ -29,8 +28,9 @@ public class PhotoController {
     }
 
     @PostMapping
-    public ResponseEntity<File> uploadPhoto(@RequestParam("image") MultipartFile uploadedFile, @RequestParam("name") String name, @RequestParam("email") String email) throws IOException {
-        File savedFile = fileService.uploadImage(uploadedFile, name, email);
+    public ResponseEntity<Photo> uploadPhoto(@RequestParam("image") MultipartFile uploadedFile, @RequestParam("name") String name, @RequestParam("email") String email) {
+        Photo savedFile = fileService.uploadImage(uploadedFile, name, email);
+
         return ResponseEntity.ok(savedFile);
     }
 

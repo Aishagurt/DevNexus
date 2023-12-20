@@ -1,0 +1,14 @@
+.App {
+    font-family: Arial, sans-serif;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.work,
+.skills,
+.ranking,
+.contact {
+    padding: 20px;
+}

@@ -36,4 +36,21 @@ public class UserService {
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public UserDto update(String email, UserDto updatedUserDto) {
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            user.setName(updatedUserDto.getName());
+            user.setSurname(updatedUserDto.getSurname());
+            user.setBirthDate(updatedUserDto.getBirthDate());
+            user.setEmail(updatedUserDto.getEmail());
+            user.setPassword(updatedUserDto.getPassword());
+
+            User updatedUser = userRepository.save(user);
+            return UserMapper.userToUserDto(updatedUser);
+        } else {
+            return null;
+        }
+    }
 }

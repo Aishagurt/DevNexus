@@ -1,5 +1,6 @@
 package com.devnexus.controller;
 
+import com.devnexus.mapper.UserMapper;
 import com.devnexus.model.api.AuthenticationRequest;
 import com.devnexus.model.api.AuthenticationResponse;
 import com.devnexus.service.AuthenticationService;
@@ -38,6 +39,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{email}")
+    public UserDto getUser(@PathVariable String email) {
+        return UserMapper.userToUserDto(userService.findUserByEmail(email));
+    }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
@@ -46,6 +52,11 @@ public class UserController {
     @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authService.refreshToken(request, response);
+    }
+
+    @PutMapping("/update/{email}")
+    public UserDto updateUser(@PathVariable(name = "email") String email, @RequestBody UserDto userDto) {
+        return userService.update(email, userDto);
     }
 
 }

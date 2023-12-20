@@ -18,19 +18,23 @@ public class FileService {
     @Autowired
     private PhotoService photoService;
 
-    public File uploadImage(MultipartFile file, String name, String email) throws IOException {
-        File savedFile = fileRepository.save(File.builder()
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .imageData(ImageUtils.compressImage(file.getBytes())).build());
+    public Photo uploadImage(MultipartFile file, String name, String email) {
+        File savedFile = null;
+        try {
+            savedFile = fileRepository.save(File.builder()
+                    .name(file.getOriginalFilename())
+                    .type(file.getContentType())
+                    .imageData(ImageUtils.compressImage(file.getBytes())).build());
+        } catch (IOException e) {
+            throw new RuntimeException("Error uploading image" + e);
+        }
 
         Photo photo = new Photo();
         photo.setName(name);
         photo.setEmail(email);
         photo.setFile(savedFile);
-        photoService.save(photo);
 
-        return savedFile;
+        return photoService.save(photo);
     }
 
     public byte[] downloadImage(String fileName) {
