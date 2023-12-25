@@ -15,6 +15,5 @@ public class PhotoDto {
     private File file;
     private String name;
     private String email;
-    private List<Long> tags;
     private List<Long> collections;
 }

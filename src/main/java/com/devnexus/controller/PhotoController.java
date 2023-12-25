@@ -5,12 +5,13 @@ import com.devnexus.mapper.PhotoMapper;
 import com.devnexus.model.db.Photo;
 import com.devnexus.service.FileService;
 import com.devnexus.service.PhotoService;
+import com.devnexus.utils.ImageUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -35,13 +36,23 @@ public class PhotoController {
     }
 
 
-    @GetMapping("/get/{fileName}")
-    public ResponseEntity<byte[]> downloadPhoto(@PathVariable String fileName){
-        byte[] imageData=fileService.downloadImage(fileName);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/png"))
-                .body(imageData);
+    @GetMapping("/get/{photoId}")
+    public ResponseEntity<byte[]> downloadPhoto(@PathVariable Long photoId) {
+        Optional<Photo> photo = photoService.findById(photoId);
 
+        if (photo.isPresent()) {
+            byte[] imageData = ImageUtils.decompressImage(photo.get().getFile().getImageData());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf("image/png"));
+            headers.setContentDispositionFormData("attachment", "photo.png");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(imageData);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{photoId}")

@@ -27,14 +27,6 @@ public class Photo {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL)
     @JoinTable(
-            name = "photos_tags",
-            joinColumns = @JoinColumn(name = "photo_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
-    )
-    private List<Tag> tags;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL)
-    @JoinTable(
             name = "photos_collections",
             joinColumns = @JoinColumn(name = "photo_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "collection_id", referencedColumnName = "id")
